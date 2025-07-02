@@ -35,7 +35,7 @@ app.post('/report', async (req, res) => {
 
   const mailOptions = {
     from: `"IP Sniffer" <${process.env.GMAIL_USER}>`,
-    to: process.env.GMAIL_USER, // 自分宛
+    to: process.env.GMAIL_USER,
     subject: '📡 アクセス情報通知',
     text: `
 📸 アクセス情報：
