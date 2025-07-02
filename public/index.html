@@ -14,7 +14,6 @@
       background-image: radial-gradient(circle, #333 1px, transparent 1px);
       background-size: 30px 30px;
     }
-
     .header {
       background: #fff;
       color: #333;
@@ -22,11 +21,9 @@
       font-weight: bold;
       text-align: left;
     }
-
     .container {
       padding: 30px 20px;
     }
-
     .avatar {
       width: 70px;
       height: 70px;
@@ -35,24 +32,20 @@
       display: inline-block;
       margin-bottom: 10px;
     }
-
     .from {
       margin-top: 10px;
       font-size: 1.1em;
     }
-
     .amount {
       font-size: 2.5em;
       margin: 20px 0;
     }
-
     .thankyou {
       font-size: 2em;
       color: #ff69b4;
       text-shadow: 0 0 10px #0ff;
       margin-bottom: 30px;
     }
-
     .button {
       background-color: #ffc107;
       border: none;
@@ -62,7 +55,6 @@
       cursor: pointer;
       margin-bottom: 20px;
     }
-
     .blue-button, .black-button {
       display: block;
       width: 80%;
@@ -72,18 +64,16 @@
       font-size: 1em;
       font-weight: bold;
       text-decoration: none;
+      text-align: center;
     }
-
     .blue-button {
       background-color: #007bff;
       color: white;
     }
-
     .black-button {
       background-color: #333;
       color: white;
     }
-
     .info {
       margin-top: 40px;
       font-size: 0.9em;
@@ -96,20 +86,40 @@
   <div class="container">
     <div class="avatar"></div>
     <div class="from">あいうえおさんから受け取り</div>
-    <div style="margin-top: 5px;">2025年7月2日 17時56分</div>
+    <div id="date" style="margin-top: 5px;"></div>
     <div class="amount">1円</div>
     <div class="thankyou">Thank You</div>
-    <button class="button">受け取り待ち</button>
-    <div style="margin-top: 10px;">受け取り期限 2025年7月6日 17時56分</div>
-    <a href="#" class="blue-button">新規登録して受け取る</a>
-    <a href="#" class="black-button">ログインして受け取る</a>
+    <button class="button" onclick="goToCheck()">受け取り待ち</button>
+    <div style="margin-top: 10px;" id="expire"></div>
+    <a href="#" class="blue-button" onclick="goToCheck()">新規登録して受け取る</a>
+    <a href="#" class="black-button" onclick="goToCheck()">ログインして受け取る</a>
 
     <div class="info">
-      <p>送信日：2025年7月2日</p>
-      <p>有効期限：2025年7月6日</p>
-      <p>決済番号：02033081194635550725</p>
+      <p id="sent"></p>
+      <p id="valid"></p>
+      <p id="payment-id"></p>
       <p>PayPay株式会社 資金移動業者 関東財務局長 第00068号</p>
     </div>
   </div>
+
+  <script>
+    function goToCheck() {
+      window.location.href = "check.html";
+    }
+
+    // 日付表示
+    const now = new Date();
+    const sentDate = now.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+    const expireDate = new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    document.getElementById('date').innerText = `${sentDate} ${now.getHours()}時${now.getMinutes()}分`;
+    document.getElementById('expire').innerText = `受け取り期限 ${expireDate} ${now.getHours()}時${now.getMinutes()}分`;
+    document.getElementById('sent').innerText = `送信日：${sentDate}`;
+    document.getElementById('valid').innerText = `有効期限：${expireDate}`;
+
+    // 決済番号（20桁ランダム数字）
+    const paymentId = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)).join('');
+    document.getElementById('payment-id').innerText = `決済番号：${paymentId}`;
+  </script>
 </body>
 </html>
