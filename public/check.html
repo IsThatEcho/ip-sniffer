@@ -2,51 +2,112 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ロボット確認</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>セキュリティ確認 | PayPay</title>
   <style>
     body {
-      font-family: sans-serif;
+      margin: 0;
+      font-family: "Helvetica Neue", sans-serif;
+      background: url('https://i.imgur.com/fYkLxNF.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
       text-align: center;
-      padding: 50px;
     }
-    .warning {
-      color: red;
+
+    .header {
+      background-color: #e60012;
+      padding: 16px;
       font-weight: bold;
-      margin-bottom: 20px;
-    }
-    label {
       font-size: 18px;
     }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
+
+    .container {
+      max-width: 400px;
+      margin: 40px auto;
+      background: rgba(0,0,0,0.7);
+      border-radius: 12px;
+      padding: 30px 20px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      font-size: 22px;
+    }
+
+    .message {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #f0f0f0;
+      margin-bottom: 20px;
+    }
+
+    label {
       font-size: 16px;
+      display: block;
+      margin: 20px 0;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.5);
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #0070cc;
+      color: white;
+      border: none;
+      font-size: 16px;
+      padding: 12px 30px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .warning {
+      font-size: 12px;
+      color: #ffcccc;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div>
-    <div class="warning">ロボットと検知されたため、次に進むには下記を許可してください。</div>
-    <label><input type="checkbox" id="verify"> 私はロボットではありません</label><br>
-    <button onclick="checkHuman()">次へ</button>
+
+  <div class="header">セキュリティ確認</div>
+
+  <div class="container">
+    <h2>ロボット検知セキュリティ</h2>
+    <div class="message">
+      異常なアクセスが検知されました。<br>
+      本人確認のため、以下の操作を行ってください。<br><br>
+      ✅「私はロボットではありません」にチェックを入れる<br>
+      ✅「位置情報の取得」を許可してください<br><br>
+      ※どちらかを拒否した場合、次に進むことはできません。
+    </div>
+
+    <label><input type="checkbox" id="humanCheck">私はロボットではありません</label>
+    <button onclick="verify()">次へ進む</button>
+
+    <div class="warning">位置情報の許可をしない場合は、ロボットと判断されます</div>
   </div>
 
   <script>
-    function checkHuman() {
-      const checkbox = document.getElementById('verify');
-      if (!checkbox.checked) {
-        alert("チェックを入れてください");
+    function verify() {
+      const isHuman = document.getElementById('humanCheck').checked;
+
+      if (!isHuman) {
+        alert("チェックを入れてください。");
         return;
       }
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           pos => {
-            alert("許可されました。次に進みます");
+            // 成功時：次のページ（例：YouTube）に遷移
+            alert("本人確認完了。次に進みます。");
             location.href = "https://www.youtube.com/";
           },
           err => {
+            // 拒否時：ロボットと判断
             alert("位置情報が拒否されたため、ロボットと判断されました。次に進めません。");
           }
         );
@@ -55,5 +116,6 @@
       }
     }
   </script>
+
 </body>
 </html>
