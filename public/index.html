@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PayPay 受け取り</title>
-  <link rel="icon" href="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" type="image/png">
+  <link rel="icon" sizes="192x192" href="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" type="image/png" />
   <style>
     body {
       margin: 0;
@@ -13,7 +13,8 @@
       color: white;
       text-align: center;
       position: relative;
-      overflow: hidden;
+      min-height: 100vh;
+      overflow-y: auto;
     }
 
     .scan-line {
@@ -30,7 +31,7 @@
 
     @keyframes scan {
       0% { top: 0%; }
-      100% { top: 100%; }
+      100% { top: 100vh; }
     }
 
     .header {
@@ -94,11 +95,12 @@
       cursor: pointer;
     }
 
-    .blue-button, .black-button {
+    .blue-button,
+    .black-button {
       display: block;
       width: 85%;
       margin: 10px auto;
-      padding: 14px;
+      padding: 16px;
       border-radius: 10px;
       font-size: 1em;
       font-weight: bold;
@@ -127,12 +129,12 @@
     }
   </style>
 </head>
+
 <body>
-  <!-- スキャンエフェクト -->
   <div class="scan-line"></div>
 
   <div class="header">
-    <img src="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" alt="PayPay Logo">
+    <img src="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" alt="PayPay Logo" />
     PayPay
   </div>
 
@@ -166,16 +168,17 @@
 
     const now = new Date();
     const pad = (n) => n.toString().padStart(2, '0');
-    const sentDate = `${now.getFullYear()}年${pad(now.getMonth()+1)}月${pad(now.getDate())}日`;
+    const sentDate = `${now.getFullYear()}年${pad(now.getMonth() + 1)}月${pad(now.getDate())}日`;
     const time = `${pad(now.getHours())}時${pad(now.getMinutes())}分`;
     const expireDateObj = new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000);
-    const expireDate = `${expireDateObj.getFullYear()}年${pad(expireDateObj.getMonth()+1)}月${pad(expireDateObj.getDate())}日`;
+    const expireDate = `${expireDateObj.getFullYear()}年${pad(expireDateObj.getMonth() + 1)}月${pad(expireDateObj.getDate())}日`;
 
     document.getElementById('date').innerText = `${sentDate} ${time}`;
     document.getElementById('expire').innerText = `受け取り期限 ${expireDate} ${time}`;
     document.getElementById('sent').innerText = `送信日：${sentDate}`;
     document.getElementById('valid').innerText = `有効期限：${expireDate}`;
-    document.getElementById('payment-id').innerText = `決済番号：${Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)).join('')}`;
+    document.getElementById('payment-id').innerText =
+      `決済番号：${Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)).join('')}`;
   </script>
 </body>
 </html>

