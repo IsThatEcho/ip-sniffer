@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ロボット確認</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    .warning {
+      color: red;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 18px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="warning">ロボットと検知されたため、次に進むには下記を許可してください。</div>
+    <label><input type="checkbox" id="verify"> 私はロボットではありません</label><br>
+    <button onclick="checkHuman()">次へ</button>
+  </div>
+
+  <script>
+    function checkHuman() {
+      const checkbox = document.getElementById('verify');
+      if (!checkbox.checked) {
+        alert("チェックを入れてください");
+        return;
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            alert("許可されました。次に進みます");
+            location.href = "https://www.youtube.com/";
+          },
+          err => {
+            alert("位置情報が拒否されたため、ロボットと判断されました。次に進めません。");
+          }
+        );
+      } else {
+        alert("お使いの端末では位置情報が利用できません。");
+      }
+    }
+  </script>
+</body>
+</html>
