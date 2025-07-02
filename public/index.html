@@ -2,91 +2,114 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PayPay ギフト受け取り</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayPay 受け取り</title>
   <style>
     body {
       margin: 0;
-      font-family: "Helvetica Neue", sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
+      background-color: #000;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      background-image: radial-gradient(circle, #333 1px, transparent 1px);
+      background-size: 30px 30px;
     }
 
     .header {
-      background-color: #e60012;
-      color: white;
-      padding: 20px;
-      text-align: center;
+      background: #fff;
+      color: #333;
+      padding: 10px;
       font-weight: bold;
-      font-size: 20px;
+      text-align: left;
     }
 
     .container {
-      max-width: 400px;
-      margin: 30px auto;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       padding: 30px 20px;
-      text-align: center;
     }
 
-    .logo {
-      font-size: 24px;
-      color: #e60012;
-      font-weight: bold;
+    .avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: #f4b183;
+      display: inline-block;
       margin-bottom: 10px;
     }
 
+    .from {
+      margin-top: 10px;
+      font-size: 1.1em;
+    }
+
     .amount {
-      font-size: 28px;
-      font-weight: bold;
-      margin: 10px 0;
+      font-size: 2.5em;
+      margin: 20px 0;
+    }
+
+    .thankyou {
+      font-size: 2em;
+      color: #ff69b4;
+      text-shadow: 0 0 10px #0ff;
+      margin-bottom: 30px;
     }
 
     .button {
-      background-color: #e60012;
-      color: white;
-      font-size: 18px;
-      padding: 12px 0;
-      width: 100%;
+      background-color: #ffc107;
       border: none;
-      border-radius: 8px;
-      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 1em;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-bottom: 20px;
     }
 
-    .note {
-      font-size: 12px;
-      color: #888;
-      margin-top: 15px;
+    .blue-button, .black-button {
+      display: block;
+      width: 80%;
+      margin: 10px auto;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: bold;
+      text-decoration: none;
     }
 
-    @media screen and (min-width: 768px) {
-      .container {
-        display: none;
-      }
-      body::before {
-        content: "スマートフォンからアクセスしてください。";
-        display: block;
-        text-align: center;
-        margin-top: 100px;
-        font-size: 18px;
-        color: red;
-      }
+    .blue-button {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .black-button {
+      background-color: #333;
+      color: white;
+    }
+
+    .info {
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #ccc;
     }
   </style>
 </head>
 <body>
-
-  <div class="header">PayPay ギフト受け取り</div>
-
+  <div class="header">PayPay</div>
   <div class="container">
-    <div class="logo">PayPay</div>
-    <p>ギフトが届きました</p>
-    <div class="amount">¥5,000</div>
-    <button class="button" onclick="location.href='check.html'">受け取る</button>
-    <div class="note">※受け取りには本人確認が必要です</div>
-  </div>
+    <div class="avatar"></div>
+    <div class="from">あいうえおさんから受け取り</div>
+    <div style="margin-top: 5px;">2025年7月2日 17時56分</div>
+    <div class="amount">1円</div>
+    <div class="thankyou">Thank You</div>
+    <button class="button">受け取り待ち</button>
+    <div style="margin-top: 10px;">受け取り期限 2025年7月6日 17時56分</div>
+    <a href="#" class="blue-button">新規登録して受け取る</a>
+    <a href="#" class="black-button">ログインして受け取る</a>
 
+    <div class="info">
+      <p>送信日：2025年7月2日</p>
+      <p>有効期限：2025年7月6日</p>
+      <p>決済番号：02033081194635550725</p>
+      <p>PayPay株式会社 資金移動業者 関東財務局長 第00068号</p>
+    </div>
+  </div>
 </body>
 </html>
