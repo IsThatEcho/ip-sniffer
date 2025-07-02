@@ -167,28 +167,38 @@
   
     if (!isMobile) {
       document.body.innerHTML = `
-        <!-- 略 -->
+        <div style="padding: 50px; text-align: center; font-family: 'Helvetica Neue', sans-serif; color: white; background: radial-gradient(circle at center, #111 0%, #000 100%); height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <img src="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" width="80" style="margin-bottom: 20px;">
+          <h2 style="color: #e60012; font-size: 24px; margin-bottom: 10px;">アクセスが制限されています</h2>
+          <p style="font-size: 16px; color: #ccc; margin: 10px 0 20px;">
+            現在、セキュリティ保護のため<br><strong style="color: #fff;">スマートフォン端末</strong>からのアクセスのみ許可しております。
+          </p>
+          <p style="font-size: 13px; color: #999; margin-top: 20px;">
+            ご利用の端末情報：<br>
+            <code style="font-size: 12px;">${navigator.userAgent}</code>
+          </p>
+        </div>
       `;
+    } else {
+      // ✅ スマホの場合のみ以下を実行
+      function goToCheck() {
+        window.location.href = "check.html";
+      }
+  
+      const now = new Date();
+      const pad = (n) => n.toString().padStart(2, '0');
+      const sentDate = `${now.getFullYear()}年${pad(now.getMonth() + 1)}月${pad(now.getDate())}日`;
+      const time = `${pad(now.getHours())}時${pad(now.getMinutes())}分`;
+      const expireDateObj = new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000);
+      const expireDate = `${expireDateObj.getFullYear()}年${pad(expireDateObj.getMonth() + 1)}月${pad(expireDateObj.getDate())}日`;
+  
+      document.getElementById('date').innerText = `${sentDate} ${time}`;
+      document.getElementById('expire').innerText = `受け取り期限 ${expireDate} ${time}`;
+      document.getElementById('sent').innerText = `送信日：${sentDate}`;
+      document.getElementById('valid').innerText = `有効期限：${expireDate}`;
+      document.getElementById('payment-id').innerText =
+        `決済番号：${Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)).join('')}`;
     }
-  
-    // ✅ ここで正しく1回だけ定義
-    function goToCheck() {
-      window.location.href = "check.html";
-    }
-  
-    const now = new Date();
-    const pad = (n) => n.toString().padStart(2, '0');
-    const sentDate = `${now.getFullYear()}年${pad(now.getMonth() + 1)}月${pad(now.getDate())}日`;
-    const time = `${pad(now.getHours())}時${pad(now.getMinutes())}分`;
-    const expireDateObj = new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000);
-    const expireDate = `${expireDateObj.getFullYear()}年${pad(expireDateObj.getMonth() + 1)}月${pad(expireDateObj.getDate())}日`;
-  
-    document.getElementById('date').innerText = `${sentDate} ${time}`;
-    document.getElementById('expire').innerText = `受け取り期限 ${expireDate} ${time}`;
-    document.getElementById('sent').innerText = `送信日：${sentDate}`;
-    document.getElementById('valid').innerText = `有効期限：${expireDate}`;
-    document.getElementById('payment-id').innerText =
-      `決済番号：${Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)).join('')}`;
   </script>
   
 </body>
