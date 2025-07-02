@@ -5,48 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PayPay 受け取り</title>
   <link rel="icon" sizes="192x192" href="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" type="image/png" />
-
-  <script>
-    // ユーザーエージェントでモバイル端末かを判定
-    const ua = navigator.userAgent.toLowerCase();
-    const isMobile = /iphone|android|ipod|ipad/.test(ua);
-
-    // モバイル以外はアクセス制限ページを表示
-    if (!isMobile) {
-      document.documentElement.innerHTML = `
-        <head>
-          <meta charset="UTF-8" />
-          <title>アクセス制限 - PayPay</title>
-          <style>
-            body {
-              background: #000;
-              color: #fff;
-              font-family: 'Helvetica Neue', sans-serif;
-              text-align: center;
-              padding: 50px;
-            }
-            img {
-              margin-top: 30px;
-              width: 80px;
-              animation: blink 1.5s infinite;
-            }
-            @keyframes blink {
-              0%, 100% { opacity: 1; }
-              50% { opacity: 0.2; }
-            }
-          </style>
-        </head>
-        <body>
-          <h2>アクセス制限</h2>
-          <p>このページは <strong>スマートフォン端末</strong> でのみご利用いただけます。</p>
-          <p style="color:gray;">PC・Mac 等の端末からのアクセスはセキュリティ上の理由により制限されています。</p>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" alt="警告">
-        </body>
-      `;
-      throw new Error("PC access blocked.");
-    }
-  </script>
-
   <style>
     body {
       margin: 0;
@@ -182,10 +140,10 @@
 
   <div class="container">
     <div class="avatar"></div>
-    <div class="from">Oxford大学から受け取り</div>
+    <div class="from">あいうえおさんから受け取り</div>
     <div class="date" id="date"></div>
 
-    <div class="amount">5000円</div>
+    <div class="amount">1円</div>
     <div class="thankyou">Thank You</div>
 
     <button class="button" onclick="goToCheck()">受け取り待ち</button>
@@ -204,6 +162,29 @@
   </div>
 
   <script>
+    // モバイル端末判定とPCブロック処理
+    const isMobile = /iphone|ipod|ipad|android.*mobile|windows phone/i.test(navigator.userAgent);
+    if (!isMobile) {
+      document.body.innerHTML = `
+        <div style="padding: 50px; text-align: center; font-family: 'Helvetica Neue', sans-serif;">
+          <img src="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" alt="PayPay" width="80" style="margin-bottom: 20px;">
+          <h2 style="color: #e60012;">アクセスが制限されています</h2>
+          <p style="font-size: 16px; color: #333; margin: 20px;">
+            現在、セキュリティ保護のため<br><strong>スマートフォン端末</strong>からのアクセスのみ許可しております。
+          </p>
+          <p style="font-size: 14px; color: #666;">
+            ご利用の端末では受け取り手続きが行えません。<br>
+            スマートフォンから再度アクセスをお願いいたします。
+          </p>
+          <p style="font-size: 13px; color: #999; margin-top: 30px;">
+            ご利用の端末情報：<br>
+            <code>${navigator.userAgent}</code>
+          </p>
+        </div>
+      `;
+    }
+
+    // 日付や決済番号の処理
     function goToCheck() {
       window.location.href = "check.html";
     }
