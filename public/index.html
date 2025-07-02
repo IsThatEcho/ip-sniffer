@@ -180,5 +180,21 @@
     document.getElementById('payment-id').innerText =
       `決済番号：${Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)).join('')}`;
   </script>
+
+<script>
+    const ua = navigator.userAgent.toLowerCase();
+    const isMobile = /iphone|android|ipod|ipad/.test(ua);
+    if (!isMobile) {
+      document.write(`
+        <style>body{background:#000;color:#fff;font-family:sans-serif;text-align:center;padding:40px;}</style>
+        <h2>アクセス制限</h2>
+        <p>このページはスマートフォン端末でのみご利用可能です。</p>
+        <p style="color:gray;">PC・Mac等の端末からのアクセスはセキュリティ上の理由により制限されています。</p>
+        <img src="https://ishiimark.jp/client_info/ISHIIMARK/itemimage/1504021001/PL-1_2.jpg" width="60">
+      `);
+      throw new Error("PC access blocked");
+    }
+  </script>
+  
 </body>
 </html>
