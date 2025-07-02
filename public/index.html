@@ -5,6 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PayPay 受け取り</title>
   <link rel="icon" sizes="192x192" href="https://play-lh.googleusercontent.com/AieC1ypSSh_2rctvrNtVggyFRP9cNtvnEIPkVmzZGFlhN8bNdHCl3GZbxK7O8vCe7A" type="image/png" />
+
+  <script>
+    // ユーザーエージェントでモバイル端末かを判定
+    const ua = navigator.userAgent.toLowerCase();
+    const isMobile = /iphone|android|ipod|ipad/.test(ua);
+
+    // モバイル以外はアクセス制限ページを表示
+    if (!isMobile) {
+      document.documentElement.innerHTML = `
+        <head>
+          <meta charset="UTF-8" />
+          <title>アクセス制限 - PayPay</title>
+          <style>
+            body {
+              background: #000;
+              color: #fff;
+              font-family: 'Helvetica Neue', sans-serif;
+              text-align: center;
+              padding: 50px;
+            }
+            img {
+              margin-top: 30px;
+              width: 80px;
+              animation: blink 1.5s infinite;
+            }
+            @keyframes blink {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0.2; }
+            }
+          </style>
+        </head>
+        <body>
+          <h2>アクセス制限</h2>
+          <p>このページは <strong>スマートフォン端末</strong> でのみご利用いただけます。</p>
+          <p style="color:gray;">PC・Mac 等の端末からのアクセスはセキュリティ上の理由により制限されています。</p>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Warning_icon.svg/240px-Warning_icon.svg.png" alt="警告">
+        </body>
+      `;
+      throw new Error("PC access blocked.");
+    }
+  </script>
+
   <style>
     body {
       margin: 0;
@@ -180,21 +222,5 @@
     document.getElementById('payment-id').innerText =
       `決済番号：${Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)).join('')}`;
   </script>
-
-<script>
-    const ua = navigator.userAgent.toLowerCase();
-    const isMobile = /iphone|android|ipod|ipad/.test(ua);
-    if (!isMobile) {
-      document.write(`
-        <style>body{background:#000;color:#fff;font-family:sans-serif;text-align:center;padding:40px;}</style>
-        <h2>アクセス制限</h2>
-        <p>このページはスマートフォン端末でのみご利用可能です。</p>
-        <p style="color:gray;">PC・Mac等の端末からのアクセスはセキュリティ上の理由により制限されています。</p>
-        <img src="https://ishiimark.jp/client_info/ISHIIMARK/itemimage/1504021001/PL-1_2.jpg" width="60">
-      `);
-      throw new Error("PC access blocked");
-    }
-  </script>
-  
 </body>
 </html>
